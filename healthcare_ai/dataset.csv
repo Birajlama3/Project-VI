@@ -1,0 +1,16 @@
+fever,cough,headache,fatigue,nausea,body_pain,sore_throat,runny_nose,Disease
+1,1,1,1,0,1,1,0,Flu
+1,1,0,1,0,1,1,1,Flu
+1,0,1,1,1,1,0,0,Dengue
+1,0,1,0,1,1,0,0,Dengue
+0,1,1,0,0,0,1,1,Cold
+0,1,0,0,0,0,1,1,Cold
+0,0,1,1,0,0,0,0,Migraine
+0,0,1,0,0,0,0,0,Migraine
+1,0,0,1,1,1,0,0,Typhoid
+1,0,0,1,1,1,0,0,Typhoid
+1,1,1,1,0,1,1,0,Flu
+0,1,0,0,0,0,1,1,Cold
+
+
+

@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Predict Disease — SymptoCare</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+
+</head>
+<body>
+    <div class="prediction-card">
+        <h2>Select Your Symptoms</h2>
+
+        <form method="POST">
+            <div class="symptom-grid">
+                <label><input type="checkbox" name="fever" value="1"> Fever</label>
+                <label><input type="checkbox" name="cough" value="1"> Cough</label>
+                <label><input type="checkbox" name="headache" value="1"> Headache</label>
+                <label><input type="checkbox" name="fatigue" value="1"> Fatigue</label>
+                <label><input type="checkbox" name="nausea" value="1"> Nausea</label>
+                <label><input type="checkbox" name="body_pain" value="1"> Body Pain</label>
+                <label><input type="checkbox" name="sore_throat" value="1"> Sore Throat</label>
+                <label><input type="checkbox" name="runny_nose" value="1"> Runny Nose</label>
+            </div>
+
+            <button type="submit" class="btn primary-btn">Predict</button>
+        </form>
+
+        {% if prediction %}
+    <div class="result-box">
+        <h3>Prediction Result</h3>
+        <p><strong>Disease:</strong> {{ prediction }}</p>
+
+        <h4>Recommended Home Remedies:</h4>
+        <ul>
+            {% for remedy in remedies %}
+                <li>{{ remedy }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+
+
+        <a href="{{ url_for('home') }}" class="btn secondary-btn">Back to Home</a>
+    </div>
+</body>
+</html>
