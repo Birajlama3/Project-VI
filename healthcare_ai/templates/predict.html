@@ -5,43 +5,64 @@
     <title>Predict Disease — SymptoCare</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
 </head>
 <body>
+
+
     <div class="prediction-card">
-        <h2>Select Your Symptoms</h2>
+        <h2>How are you feeling today?</h2>
 
-        <form method="POST">
-            <div class="symptom-grid">
-                <label><input type="checkbox" name="fever" value="1"> Fever</label>
-                <label><input type="checkbox" name="cough" value="1"> Cough</label>
-                <label><input type="checkbox" name="headache" value="1"> Headache</label>
-                <label><input type="checkbox" name="fatigue" value="1"> Fatigue</label>
-                <label><input type="checkbox" name="nausea" value="1"> Nausea</label>
-                <label><input type="checkbox" name="body_pain" value="1"> Body Pain</label>
-                <label><input type="checkbox" name="sore_throat" value="1"> Sore Throat</label>
-                <label><input type="checkbox" name="runny_nose" value="1"> Runny Nose</label>
+        {% if error %}
+            <div class="alert alert-error">{{ error }}</div>
+        {% endif %}
+
+        <form method="POST" class="search-form">
+            <div class="assistant-row">
+                <div style="flex:1">
+                    <div class="search-row">
+                        <input class="search-input" type="text" name="search_symptoms" placeholder="e.g. I have a headache and feel nauseous" value="{{ search_symptoms or '' }}">
+                        <button type="submit" class="btn primary-btn">Get suggestions</button>
+                    </div>
+                    <p class="muted">Write symptoms naturally or comma-separated. We'll return commonly associated conditions from the dataset.</p>
+                </div>
             </div>
-
-            <button type="submit" class="btn primary-btn">Predict</button>
         </form>
 
-        {% if prediction %}
-    <div class="result-box">
-        <h3>Prediction Result</h3>
-        <p><strong>Disease:</strong> {{ prediction }}</p>
+        {% if matched_diseases %}
+            <div class="result-box">
+                <h3>Most Likely Conditions</h3>
+                <ul class="disease-list">
+                    {% for d, cnt in top_diseases %}
+                        <li class="disease-item"> 
+                            <div>
+                                <div class="disease-name">{{ d }}</div>
+                                <div class="muted" style="font-size:0.85rem">Matches in dataset: {{ cnt }}</div>
+                            </div>
+                            <span class="badge">{{ cnt }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% if remedies %}
+                <div class="result-box" style="margin-top:12px;background:#fffaf0;border-left-color:#f59e0b;">
+                    <h3>Home Remedies — {{ top_diseases[0][0] }}</h3>
+                    <ul class="remedies-list">
+                        {% for r in remedies %}
+                            <li>{{ r }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            {% endif %}
+        {% elif search_symptoms is defined and search_symptoms %}
+            <div class="result-box">
+                <h3>No matches</h3>
+                <p class="muted">No dataset rows match '{{ search_symptoms }}'. Try slightly different symptom terms or check spelling.</p>
+            </div>
+        {% endif %}
 
-        <h4>Recommended Home Remedies:</h4>
-        <ul>
-            {% for remedy in remedies %}
-                <li>{{ remedy }}</li>
-            {% endfor %}
-        </ul>
-    </div>
-    {% endif %}
-
-
-        <a href="{{ url_for('home') }}" class="btn secondary-btn">Back to Home</a>
+        <div style="text-align:center;margin-top:18px;">
+            <a href="{{ url_for('home') }}" class="btn secondary-btn">Back to Home</a>
+        </div>
     </div>
 </body>
 </html>

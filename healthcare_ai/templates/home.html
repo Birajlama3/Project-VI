@@ -12,11 +12,11 @@
     <section class="hero">
         <div class="hero-content">
             <h1>SymptoCare</h1>
-            <p>Your AI-Powered Symptom-Based Disease Predictor</p>
-            <a href="{{ url_for('predict') }}" class="btn primary-btn">Predict Now</a>
+            <p>A friendly symptom checker that helps you understand common conditions related to your symptoms.</p>
+            <a href="{{ url_for('predict') }}" class="btn primary-btn">Check My Symptoms</a>
         </div>
         <div class="hero-image">
-            <img src="{{ url_for('static', filename='doctor.png') }}" alt="Doctor Illustration">
+            <img src="{{ url_for('static', filename='doctor.png') }}" alt="Healthcare Illustration">
         </div>
     </section>
 
@@ -24,9 +24,9 @@
     <section class="about">
         <h2>What is SymptoCare?</h2>
         <p>
-            SymptoCare is an intelligent healthcare assistant that helps you assess possible diseases
-            based on the symptoms you are experiencing. By using AI and machine learning, it provides
-            a likely diagnosis, helping you make informed decisions about your health. 
+            SymptoCare is a practical symptom checker that looks for commonly reported conditions
+            associated with the symptoms you share. It is intended to provide guidance, not a
+            medical diagnosis — consult a healthcare professional for personal medical advice.
         </p>
     </section>
 
@@ -39,8 +39,8 @@
                 <p>Get instant prediction by selecting your current symptoms.</p>
             </div>
             <div class="card">
-                <h3>AI-Powered</h3>
-                <p>Uses machine learning to provide accurate predictions.</p>
+                <h3>Evidence-Based</h3>
+                <p>Matches your symptoms to patterns observed in the dataset.</p>
             </div>
             <div class="card">
                 <h3>Easy to Use</h3>
@@ -51,12 +51,12 @@
 
     <!-- Call-to-Action Section -->
     <section class="cta-section">
-        <h2>Ready to check your symptoms?</h2>
-        <a href="{{ url_for('predict') }}" class="btn primary-btn">Predict Your Disease</a>
+        <h2>Ready to learn more about your symptoms?</h2>
+        <a href="{{ url_for('predict') }}" class="btn primary-btn">Start a Symptom Check</a>
     </section>
 
     <footer>
-        <p>&copy; 2026 SymptoCare – AI Healthcare Assistant</p>
+        <p>&copy; 2026 SymptoCare — Symptom Checker</p>
     </footer>
 </body>
 </html>
