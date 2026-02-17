@@ -20,6 +20,18 @@ except Exception as e:
     print(f"Error loading model: {e}. Using fallback.")
     # No exit() - continue
 
+# 🏥 Generic remedies for diseases without specific remedies
+generic_remedies = [
+    "Consult a healthcare professional for proper diagnosis",
+    "Rest and get adequate sleep",
+    "Stay hydrated by drinking plenty of water",
+    "Eat nutritious, balanced meals",
+    "Monitor your symptoms closely",
+    "Maintain good hygiene practices",
+    "Avoid stress and manage anxiety",
+    "Follow prescribed medications if advised"
+]
+
 # 🏥 Expanded home remedies database (based on the 41 diseases in the dataset)
 remedies = {
     "Fungal infection": ["Keep skin dry", "Use antifungal cream", "Avoid tight clothing", "Consult a dermatologist"],
@@ -77,6 +89,7 @@ def predict():
     matched_diseases = []
     matched_examples = []
     search_query = ""
+    confidence_scores = []  # NEW: Store confidence scores
 
     # Load latest data.csv for display (reload each request so newest file is used)
     # Try data.csv first, but prefer a file that contains symptom-like columns
@@ -115,8 +128,26 @@ def predict():
 
     # Handle symptom-search (Option C): find dataset rows that match entered symptoms
     if request.method == "POST":
+        # Get text input
         search_query = (request.form.get("search_symptoms") or "").strip()
-        if search_query:
+        
+        # NEW: Input validation and sanitization
+        if not search_query:
+            error_message = "Please enter at least one symptom."
+        elif len(search_query) > 500:
+            error_message = "Input too long. Please keep symptoms under 500 characters."
+        elif len(search_query) < 2:
+            error_message = "Please enter valid symptoms (at least 2 characters)."
+        else:
+            # Sanitize: remove special characters except commas, spaces, hyphens
+            import re
+            sanitized_query = re.sub(r'[^a-zA-Z0-9\s,\-]', '', search_query)
+            if not sanitized_query.strip():
+                error_message = "Input contains invalid characters. Use letters, numbers, commas, and hyphens only."
+            else:
+                search_query = sanitized_query
+        
+        if search_query and not error_message:
             # Build normalized map of CSV column normalized-name -> actual column
             col_map = {}
             norm_cols = {}
@@ -195,29 +226,51 @@ def predict():
                 if d is not None:
                     diseases.append(str(d))
 
+            # filter out non-informative labels (e.g. 'No Disease')
+            def _is_informative(name):
+                if not name:
+                    return False
+                s = str(name).strip().lower()
+                return s not in ("no disease", "no_disease", "none", "nan", "no")
+
+            diseases = [d for d in diseases if _is_informative(d)]
             matched_diseases = list(dict.fromkeys(diseases))  # unique in order
             # compute top disease counts for UI ranking
             if diseases:
                 counts = Counter(diseases)
                 top_diseases = counts.most_common(20)
+                
+                # NEW: Calculate confidence scores based on frequency
+                total_matches = len(matched_rows)
+                confidence_scores = []
+                for disease, count in top_diseases:
+                    confidence = count / total_matches if total_matches > 0 else 0
+                    confidence_scores.append((disease, confidence))
             else:
                 top_diseases = []
+                confidence_scores = []
 
             # prepare recommended home remedies for the top disease (if available)
             disease_remedies = []
-            if top_diseases:
-                top_name = str(top_diseases[0][0])
+            if confidence_scores:
+                top_name = str(confidence_scores[0][0])
                 # direct match
                 if top_name in remedies:
                     disease_remedies = remedies[top_name]
                 else:
                     # case-insensitive or contains match fallback
+                    found = False
                     for rk, rv in remedies.items():
                         if rk.lower() == top_name.lower() or top_name.lower() in rk.lower() or rk.lower() in top_name.lower():
                             disease_remedies = rv
+                            found = True
                             break
+                    # NEW: If no specific remedies found, use generic remedies
+                    if not found:
+                        disease_remedies = generic_remedies
             print(f"DEBUG: requested_cols -> {requested_cols}")
             print(f"DEBUG: matched {len(matched_rows)} rows")
+            print(f"DEBUG: confidence_scores -> {confidence_scores[:3]}")
             for idx, row in matched_rows[:5]:
                 rec = {"_idx": str(idx), "Disease": row.get("Disease")}
                 # build short summary using symptom_in_csv
@@ -257,7 +310,8 @@ def predict():
                            matched_examples=matched_examples,
                            search_symptoms=search_query,
                            available_columns=available_columns,
-                           top_diseases=top_diseases)
+                           top_diseases=top_diseases,
+                           confidence_scores=confidence_scores)  # NEW: Pass confidence scores
 
 if __name__ == "__main__":
     print("Starting Flask app...")  # Debug print
