@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search History — SymptoCare</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="prediction-card">
+        <h2>📋 Search History</h2>
+        <p class="muted">Your last 100 symptom searches and predictions</p>
+
+        {% if searches %}
+            <div class="history-table">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Symptoms</th>
+                            <th>Top Prediction</th>
+                            <th>Confidence</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for search in searches %}
+                            <tr>
+                                <td class="timestamp">{{ search.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                                <td class="symptoms">{{ search.symptoms }}</td>
+                                <td class="prediction">{{ search.top_prediction or 'N/A' }}</td>
+                                <td class="confidence">
+                                    {% if search.confidence %}
+                                        <span class="badge">{{ (search.confidence * 100)|round(1) }}%</span>
+                                    {% else %}
+                                        <span class="badge">—</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="result-box">
+                <p class="muted">No search history yet. Start by checking your symptoms!</p>
+            </div>
+        {% endif %}
+
+        <div style="text-align:center;margin-top:24px;">
+            <a href="{{ url_for('predict') }}" class="btn primary-btn">New Search</a>
+            <a href="{{ url_for('home') }}" class="btn secondary-btn">Back to Home</a>
+        </div>
+    </div>
+
+    <style>
+        .history-table {
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        thead {
+            background: #f8fafc;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        th {
+            padding: 14px;
+            text-align: left;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        td {
+            padding: 12px 14px;
+            border-bottom: 1px solid #e2e8f0;
+            color: #334155;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        .timestamp {
+            font-size: 0.9em;
+            color: #64748b;
+        }
+
+        .symptoms {
+            font-size: 0.95em;
+            max-width: 250px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .prediction {
+            font-weight: 600;
+            color: #0077b6;
+        }
+
+        .confidence {
+            text-align: center;
+        }
+
+        .badge {
+            background: #f0f9ff;
+            color: #0077b6;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 900px) {
+            table {
+                font-size: 0.9em;
+            }
+
+            th, td {
+                padding: 10px;
+            }
+
+            .symptoms {
+                max-width: 150px;
+            }
+        }
+    </style>
+</body>
+</html>

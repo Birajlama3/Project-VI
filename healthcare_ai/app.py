@@ -2,8 +2,31 @@ from flask import Flask, render_template, request
 import pandas as pd
 import joblib
 from collections import Counter
+from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 app = Flask(__name__)
+
+# MySQL Database Configuration
+# Format: mysql+pymysql://username:password@host:port/database_name
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:password@localhost:3306/symptom_tracker'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db = SQLAlchemy(app)
+
+# Database Model for Search History
+class SearchHistory(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    symptoms = db.Column(db.String(500), nullable=False)
+    top_prediction = db.Column(db.String(100))
+    confidence = db.Column(db.Float)
+    timestamp = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def __repr__(self):
+        return f'<Search: {self.symptoms} -> {self.top_prediction}>'
+
+# Create database tables
+with app.app_context():
+    db.create_all()
 
 # Load the model
 model = None
@@ -80,6 +103,12 @@ remedies = {
 @app.route("/")
 def home():
     return render_template("home.html")
+
+@app.route("/history")
+def history():
+    """Display all search history"""
+    searches = SearchHistory.query.order_by(SearchHistory.timestamp.desc()).limit(100).all()
+    return render_template("history.html", searches=searches)
 
 @app.route("/predict", methods=["GET", "POST"])
 def predict():
@@ -268,6 +297,24 @@ def predict():
                     # NEW: If no specific remedies found, use generic remedies
                     if not found:
                         disease_remedies = generic_remedies
+            
+            # NEW: Save search to database
+            if confidence_scores:
+                try:
+                    top_disease = str(confidence_scores[0][0])
+                    top_confidence = float(confidence_scores[0][1])
+                    search_record = SearchHistory(
+                        symptoms=search_query,
+                        top_prediction=top_disease,
+                        confidence=top_confidence
+                    )
+                    db.session.add(search_record)
+                    db.session.commit()
+                    print(f"DEBUG: Saved search to database - {top_disease} ({top_confidence:.2%})")
+                except Exception as e:
+                    print(f"DEBUG: Failed to save search - {e}")
+                    db.session.rollback()
+            
             print(f"DEBUG: requested_cols -> {requested_cols}")
             print(f"DEBUG: matched {len(matched_rows)} rows")
             print(f"DEBUG: confidence_scores -> {confidence_scores[:3]}")
