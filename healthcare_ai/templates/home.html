@@ -1,62 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>SymptoCare — Intelligent Health Predictor</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SymptoCare — Intelligent Health Predictor</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <h1>SymptoCare</h1>
-            <p>A friendly symptom checker that helps you understand common conditions related to your symptoms.</p>
-            <a href="{{ url_for('predict') }}" class="btn primary-btn">Check My Symptoms</a>
+
+  {% if not session.get('user_id') %}
+  <script>window.location.href = "{{ url_for('login') }}";</script>
+  {% endif %}
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <span class="dot"></span> SymptoCare
+    </div>
+    <div class="navbar-links">
+      {% if session.get('user_id') %}
+        <a href="{{ url_for('predict') }}">Check Symptoms</a>
+        <a href="{{ url_for('history') }}">History</a>
+        <div class="navbar-user">
+          <div class="avatar">{{ session.username[0].upper() }}</div>
+          {{ session.username }}
         </div>
-        <div class="hero-image">
-            <img src="{{ url_for('static', filename='doctor.png') }}" alt="Healthcare Illustration">
+        <a href="{{ url_for('logout') }}" class="btn-logout">Log out</a>
+      {% else %}
+        <a href="{{ url_for('login') }}">Log in</a>
+        <a href="{{ url_for('register') }}" class="btn btn-teal">Get started</a>
+      {% endif %}
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <span class="dot" style="width:6px;height:6px;background:var(--teal-light);border-radius:50%;display:inline-block;animation:pulse 2s infinite;"></span>
+        AI-Powered Health Insights
+      </div>
+      <h1 class="hero-title">
+        Understand your<br><em>symptoms</em> better
+      </h1>
+      <p class="hero-subtitle">
+        Enter how you're feeling and SymptoCare matches your symptoms to common conditions — giving you a head start before your doctor's visit.
+      </p>
+      <div class="hero-actions">
+        {% if session.get('user_id') %}
+          <a href="{{ url_for('predict') }}" class="btn btn-teal">Check my symptoms →</a>
+          <a href="{{ url_for('history') }}" class="btn btn-outline" style="color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.2);">View history</a>
+        {% else %}
+          <a href="{{ url_for('register') }}" class="btn btn-teal">Get started free →</a>
+          <a href="{{ url_for('login') }}" class="btn btn-outline" style="color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.2);">Log in</a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-card-stack">
+        <div class="stat-card">
+          <div class="stat-label">Conditions covered</div>
+          <div class="stat-value">41</div>
+          <div class="stat-sub">Common diseases tracked</div>
         </div>
-    </section>
-
-    <!-- About Section -->
-    <section class="about">
-        <h2>What is SymptoCare?</h2>
-        <p>
-            SymptoCare is a practical symptom checker that looks for commonly reported conditions
-            associated with the symptoms you share. It is intended to provide guidance, not a
-            medical diagnosis — consult a healthcare professional for personal medical advice.
-        </p>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features">
-        <h2>Features</h2>
-        <div class="feature-cards">
-            <div class="card">
-                <h3>Quick Diagnosis</h3>
-                <p>Get instant prediction by selecting your current symptoms.</p>
-            </div>
-            <div class="card">
-                <h3>Evidence-Based</h3>
-                <p>Matches your symptoms to patterns observed in the dataset.</p>
-            </div>
-            <div class="card">
-                <h3>Easy to Use</h3>
-                <p>Simple, interactive interface for everyone.</p>
-            </div>
+        <div class="stat-card">
+          <div class="stat-label">Analysis speed</div>
+          <div class="stat-value">Instant</div>
+          <div class="stat-sub">Real-time symptom matching</div>
         </div>
-    </section>
+        <div class="stat-card">
+          <div class="stat-label">Your data</div>
+          <div class="stat-value">Private</div>
+          <div class="stat-sub">Stored securely, only yours</div>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <!-- Call-to-Action Section -->
-    <section class="cta-section">
-        <h2>Ready to learn more about your symptoms?</h2>
-        <a href="{{ url_for('predict') }}" class="btn primary-btn">Start a Symptom Check</a>
-    </section>
+  <!-- Features -->
+  <section class="section" style="background:var(--cream);">
+    <div style="text-align:center;margin-bottom:0;">
+      <span class="section-label">What we offer</span>
+      <h2 class="section-title" style="margin:0 auto 16px;">Built for clarity, not complexity</h2>
+      <p class="section-body" style="margin:0 auto;text-align:center;">No jargon, no confusing dashboards — just type what you feel and get clear, actionable information.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <h3>Smart Matching</h3>
+        <p>Type naturally or use comma-separated symptoms. Our matcher understands how real people describe how they feel.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Confidence Scores</h3>
+        <p>See ranked conditions with percentage likelihoods based on real symptom-disease data patterns.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌿</div>
+        <h3>Home Remedies</h3>
+        <p>Get practical self-care tips for your top matched condition while you decide your next steps.</p>
+      </div>
+    </div>
+  </section>
 
-    <footer>
-        <p>&copy; 2026 SymptoCare — Symptom Checker</p>
-    </footer>
+  <!-- CTA Band -->
+  <div class="cta-band">
+    <h2>Ready to check your <em>symptoms?</em></h2>
+    {% if session.get('user_id') %}
+      <a href="{{ url_for('predict') }}" class="btn btn-teal" style="font-size:16px;padding:14px 32px;">Start now →</a>
+    {% else %}
+      <a href="{{ url_for('register') }}" class="btn btn-teal" style="font-size:16px;padding:14px 32px;">Create free account →</a>
+    {% endif %}
+  </div>
+
+  <footer>
+    <span style="font-family:'DM Serif Display',serif;font-size:16px;color:rgba(255,255,255,0.5);">SymptoCare</span>
+    <span>© 2026 · For educational use only · Not a medical diagnosis tool</span>
+  </footer>
+
 </body>
 </html>

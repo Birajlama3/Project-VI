@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Log in — SymptoCare</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="auth-layout">
+
+    <!-- Left panel -->
+    <div class="auth-left">
+      <div class="auth-brand">Sympto<span>Care</span></div>
+      <div class="auth-quote">
+        <blockquote>"The greatest medicine of all is to teach people how not to need it."</blockquote>
+        <cite>— Hippocrates</cite>
+      </div>
+      <div class="auth-stats">
+        <div class="auth-stat-item">
+          <div class="num">41</div>
+          <div class="lbl">Conditions</div>
+        </div>
+        <div class="auth-stat-item">
+          <div class="num">100%</div>
+          <div class="lbl">Private</div>
+        </div>
+        <div class="auth-stat-item">
+          <div class="num">Free</div>
+          <div class="lbl">Always</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right panel -->
+    <div class="auth-right">
+      <div class="auth-form-box">
+        <h2>Welcome back</h2>
+        <p class="subtitle">Log in to your SymptoCare account</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+          <div class="flash-list">
+            {% for category, message in messages %}
+              <div class="flash-item flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" placeholder="Your username" required autocomplete="username">
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Your password" required autocomplete="current-password">
+          </div>
+          <button type="submit" class="auth-submit">Log in →</button>
+        </form>
+
+        <div class="auth-switch">
+          Don't have an account? <a href="{{ url_for('register') }}">Sign up free</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

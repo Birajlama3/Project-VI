@@ -1,118 +1,146 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Predict Disease — SymptoCare</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Check Symptoms — SymptoCare</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
 
+  <nav class="navbar">
+    <a href="{{ url_for('home') }}" class="navbar-brand" style="text-decoration:none;">
+      <span class="dot"></span> SymptoCare
+    </a>
+    <div class="navbar-links">
+      <a href="{{ url_for('history') }}">History</a>
+      <div class="navbar-user">
+        <div class="avatar">{{ session.username[0].upper() }}</div>
+        {{ session.username }}
+      </div>
+      <a href="{{ url_for('logout') }}" class="btn-logout">Log out</a>
+    </div>
+  </nav>
 
-    <div class="prediction-card">
-        <div class="disclaimer-banner">
-            <strong>⚠️ Medical Disclaimer:</strong> SymptoCare is an educational tool for symptom information only. It is NOT a substitute for professional medical advice, diagnosis, or treatment. Always consult with a qualified healthcare provider for accurate medical guidance. Never delay seeking professional help based on information from this tool.
-        </div>
+  <div class="predict-layout">
 
-        <h2>How are you feeling today?</h2>
-
-        {% if error %}
-            <div class="alert alert-error">{{ error }}</div>
-        {% endif %}
-
-        <form method="POST" class="search-form" id="symptomForm">
-            <div class="assistant-row">
-                <div style="flex:1">
-                    <div class="search-row">
-                        <input class="search-input" type="text" name="search_symptoms" placeholder="e.g. headache, fever, cough or describe your symptoms naturally" value="{{ search_symptoms or '' }}" maxlength="500" required>
-                        <button type="submit" class="btn primary-btn" id="submitBtn">Analyze</button>
-                    </div>
-                    <p class="muted">Enter symptoms naturally, comma-separated, or just describe how you're feeling. We'll match them to common conditions.</p>
-                </div>
-            </div>
-        </form>
-
-        <!-- Loading Spinner -->
-        <div id="loadingSpinner" class="loading-spinner" style="display:none;">
-            <div class="spinner"></div>
-            <p>Analyzing your symptoms...</p>
-        </div>
-
-        {% if prediction %}
-            <div class="result-box">
-                <h3>Primary Prediction</h3>
-                <p class="disease-primary">{{ prediction }}</p>
-                {% if confidence_scores %}
-                    <div class="confidence-badge">
-                        <strong>{{ (confidence_scores[0][1] * 100)|round(1) }}%</strong> confidence
-                    </div>
-                    {% if confidence_scores|length > 1 %}
-                        <p class="muted" style="margin-top:16px;">Other possibilities:</p>
-                        <div class="confidence-list">
-                            {% for disease, confidence in confidence_scores[1:6] %}
-                                <div class="confidence-item">
-                                    <span>{{ disease }}</span>
-                                    <span class="confidence-percent">{{ (confidence * 100)|round(1) }}%</span>
-                                </div>
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-                {% endif %}
-            </div>
-            {% if remedies %}
-                <div class="result-box" style="margin-top:12px;background:#fffaf0;border-left-color:#f59e0b;">
-                    <h3>Suggested Home Remedies</h3>
-                    <p class="muted">For: <strong>{{ prediction }}</strong></p>
-                    <ul class="remedies-list">
-                        {% for r in remedies %}
-                            <li>{{ r }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            {% endif %}
-        {% endif %}
-
-        {% if matched_diseases %}
-            <div class="result-box">
-                <h3>Likely Conditions</h3>
-                <p class="disease-primary">{{ top_diseases[0][0] }}</p>
-                {% if top_diseases|length > 1 %}
-                    <p class="muted" style="margin-top:8px;">Other possibilities:</p>
-                    <ul class="disease-simple">
-                        {% for d, cnt in top_diseases[1:6] %}
-                            <li>{{ d }}</li>
-                        {% endfor %}
-                    </ul>
-                {% endif %}
-            </div>
-            {% if remedies %}
-                <div class="result-box" style="margin-top:12px;background:#fffaf0;border-left-color:#f59e0b;">
-                    <h3>Suggested Home Remedies</h3>
-                    <p class="muted">For: <strong>{{ top_diseases[0][0] }}</strong></p>
-                    <ul class="remedies-list">
-                        {% for r in remedies %}
-                            <li>{{ r }}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            {% endif %}
-        {% elif search_symptoms is defined and search_symptoms %}
-            <div class="result-box">
-                <h3>No matches</h3>
-                <p class="muted">No dataset rows match '{{ search_symptoms }}'. Try slightly different symptom terms or check spelling.</p>
-            </div>
-        {% endif %}
-
-        <div style="text-align:center;margin-top:18px;">
-            <a href="{{ url_for('home') }}" class="btn secondary-btn">Back to Home</a>
-        </div>
+    <div class="page-header">
+      <h1>How are you feeling?</h1>
+      <p>Describe your symptoms and we'll match them to common conditions</p>
     </div>
 
-    <script>
-        document.getElementById('symptomForm').addEventListener('submit', function() {
-            document.getElementById('loadingSpinner').style.display = 'block';
-            document.getElementById('submitBtn').disabled = true;
-        });
-    </script>
+    <div class="disclaimer">
+      <strong>⚠ Medical disclaimer:</strong> SymptoCare is an educational tool only — not a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider.
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash-item flash-{{ category }}" style="margin-bottom:16px;">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    {% if error %}
+      <div class="alert-error" style="margin-bottom:16px;">{{ error }}</div>
+    {% endif %}
+
+    <div class="search-card">
+      <label for="symptom-input">Enter your symptoms</label>
+      <form method="POST" id="symptomForm">
+        <div class="search-row">
+          <input
+            class="search-input"
+            type="text"
+            id="symptom-input"
+            name="search_symptoms"
+            placeholder="e.g. headache, fever, fatigue — or describe naturally"
+            value="{{ search_symptoms or '' }}"
+            maxlength="500"
+            required
+            autocomplete="off"
+          >
+          <button type="submit" class="btn btn-primary" id="submitBtn">Analyze →</button>
+        </div>
+        <div class="search-hint">Separate symptoms with commas, or just describe how you feel in plain English</div>
+      </form>
+    </div>
+
+    <div id="loadingSpinner" class="loading-spinner" style="display:none;">
+      <div class="spinner"></div>
+      <p>Analyzing your symptoms…</p>
+    </div>
+
+    <!-- Results -->
+    {% if matched_diseases or prediction %}
+    <div class="result-section">
+
+      <!-- Primary prediction -->
+      <div class="result-card">
+        <div class="result-card-header">
+          <h3>Primary match</h3>
+          {% if confidence_scores %}
+            <span class="confidence-pill">
+              <span class="dot"></span>
+              {{ (confidence_scores[0][1] * 100)|round(1) }}% confidence
+            </span>
+          {% endif %}
+        </div>
+
+        <div class="top-disease">
+          {{ confidence_scores[0][0] if confidence_scores else (top_diseases[0][0] if top_diseases else prediction) }}
+        </div>
+
+        {% if confidence_scores and confidence_scores|length > 1 %}
+          <div class="alternatives-label">Other possibilities</div>
+          <div class="alt-list">
+            {% for disease, conf in confidence_scores[1:6] %}
+              <div class="alt-item">
+                <span>{{ disease }}</span>
+                <span class="alt-pct">{{ (conf * 100)|round(1) }}%</span>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Remedies -->
+      {% if remedies %}
+      <div class="remedy-card">
+        <h3>Home remedies</h3>
+        <div class="remedy-disease">
+          For {{ confidence_scores[0][0] if confidence_scores else top_diseases[0][0] }}
+        </div>
+        <ul class="remedy-list">
+          {% for r in remedies %}
+            <li>{{ r }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+    </div>
+
+    {% elif search_symptoms %}
+    <div class="no-match">
+      <h3>No matches found</h3>
+      <p>No conditions matched "<strong>{{ search_symptoms }}</strong>". Try different phrasing or check spelling.</p>
+    </div>
+    {% endif %}
+
+    <div style="margin-top:32px;">
+      <a href="{{ url_for('home') }}" class="btn btn-outline">← Back to home</a>
+    </div>
+
+  </div>
+
+  <script>
+    document.getElementById('symptomForm').addEventListener('submit', function() {
+      document.getElementById('loadingSpinner').style.display = 'block';
+      document.getElementById('submitBtn').disabled = true;
+      document.getElementById('submitBtn').textContent = 'Analyzing…';
+    });
+  </script>
+
 </body>
 </html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Create account — SymptoCare</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="auth-layout">
+
+    <!-- Left panel -->
+    <div class="auth-left">
+      <div class="auth-brand">Sympto<span>Care</span></div>
+      <div class="auth-quote">
+        <blockquote>"Take care of your body. It's the only place you have to live."</blockquote>
+        <cite>— Jim Rohn</cite>
+      </div>
+      <div class="auth-stats">
+        <div class="auth-stat-item">
+          <div class="num">41</div>
+          <div class="lbl">Conditions</div>
+        </div>
+        <div class="auth-stat-item">
+          <div class="num">100%</div>
+          <div class="lbl">Private</div>
+        </div>
+        <div class="auth-stat-item">
+          <div class="num">Free</div>
+          <div class="lbl">Always</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right panel -->
+    <div class="auth-right">
+      <div class="auth-form-box">
+        <h2>Create account</h2>
+        <p class="subtitle">Start tracking your symptoms today</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+          <div class="flash-list">
+            {% for category, message in messages %}
+              <div class="flash-item flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input type="text" id="username" name="username" placeholder="Choose a username" required autocomplete="username" minlength="3">
+            <div class="form-hint">At least 3 characters</div>
+          </div>
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" placeholder="Choose a password" required autocomplete="new-password" minlength="6">
+            <div class="form-hint">At least 6 characters</div>
+          </div>
+          <div class="form-group">
+            <label for="confirm_password">Confirm password</label>
+            <input type="password" id="confirm_password" name="confirm_password" placeholder="Repeat your password" required>
+          </div>
+          <button type="submit" class="auth-submit">Create account →</button>
+        </form>
+
+        <div class="auth-switch">
+          Already have an account? <a href="{{ url_for('login') }}">Log in</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
