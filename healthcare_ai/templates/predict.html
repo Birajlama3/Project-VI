@@ -13,6 +13,7 @@
       <span class="dot"></span> SymptoCare
     </a>
     <div class="navbar-links">
+      <a href="{{ url_for('appointments') }}">My Appointments</a>
       <a href="{{ url_for('history') }}">History</a>
       <div class="navbar-user">
         <div class="avatar">{{ session.username[0].upper() }}</div>
@@ -30,48 +31,34 @@
     </div>
 
     <div class="disclaimer">
-      <strong>⚠ Medical disclaimer:</strong> SymptoCare is an educational tool only — not a substitute for professional medical advice, diagnosis, or treatment. Always consult a qualified healthcare provider.
+      <strong>⚠ Medical disclaimer:</strong> SymptoCare is an educational tool only — not a substitute for professional medical advice. Always consult a qualified healthcare provider.
     </div>
 
     {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          <div class="flash-item flash-{{ category }}" style="margin-bottom:16px;">{{ message }}</div>
-        {% endfor %}
-      {% endif %}
+      {% if messages %}{% for cat, msg in messages %}
+        <div class="flash-item flash-{{ cat }}" style="margin-bottom:16px;">{{ msg }}</div>
+      {% endfor %}{% endif %}
     {% endwith %}
 
-    {% if error %}
-      <div class="alert-error" style="margin-bottom:16px;">{{ error }}</div>
-    {% endif %}
+    {% if error %}<div class="alert-error" style="margin-bottom:16px;">{{ error }}</div>{% endif %}
 
     <div class="search-card">
       <label for="symptom-input">Enter your symptoms</label>
       <form method="POST" id="symptomForm">
         <div class="search-row">
-          <input
-            class="search-input"
-            type="text"
-            id="symptom-input"
-            name="search_symptoms"
-            placeholder="e.g. headache, fever, fatigue — or describe naturally"
-            value="{{ search_symptoms or '' }}"
-            maxlength="500"
-            required
-            autocomplete="off"
-          >
+          <input class="search-input" type="text" id="symptom-input" name="search_symptoms"
+            placeholder="e.g. headache, fever, fatigue"
+            value="{{ search_symptoms or '' }}" maxlength="500" required autocomplete="off">
           <button type="submit" class="btn btn-primary" id="submitBtn">Analyze →</button>
         </div>
-        <div class="search-hint">Separate symptoms with commas, or just describe how you feel in plain English</div>
+        <div class="search-hint">Separate symptoms with commas</div>
       </form>
     </div>
 
     <div id="loadingSpinner" class="loading-spinner" style="display:none;">
-      <div class="spinner"></div>
-      <p>Analyzing your symptoms…</p>
+      <div class="spinner"></div><p>Analyzing your symptoms…</p>
     </div>
 
-    <!-- Results -->
     {% if matched_diseases or prediction %}
     <div class="result-section">
 
@@ -81,23 +68,20 @@
           <h3>Primary match</h3>
           {% if confidence_scores %}
             <span class="confidence-pill">
-              <span class="dot"></span>
-              {{ (confidence_scores[0][1] * 100)|round(1) }}% confidence
+              <span class="dot"></span>{{ (confidence_scores[0][1]*100)|round(1) }}% confidence
             </span>
           {% endif %}
         </div>
-
         <div class="top-disease">
           {{ confidence_scores[0][0] if confidence_scores else (top_diseases[0][0] if top_diseases else prediction) }}
         </div>
-
         {% if confidence_scores and confidence_scores|length > 1 %}
           <div class="alternatives-label">Other possibilities</div>
           <div class="alt-list">
             {% for disease, conf in confidence_scores[1:6] %}
               <div class="alt-item">
                 <span>{{ disease }}</span>
-                <span class="alt-pct">{{ (conf * 100)|round(1) }}%</span>
+                <span class="alt-pct">{{ (conf*100)|round(1) }}%</span>
               </div>
             {% endfor %}
           </div>
@@ -108,14 +92,61 @@
       {% if remedies %}
       <div class="remedy-card">
         <h3>Home remedies</h3>
-        <div class="remedy-disease">
-          For {{ confidence_scores[0][0] if confidence_scores else top_diseases[0][0] }}
-        </div>
+        <div class="remedy-disease">For {{ confidence_scores[0][0] if confidence_scores else top_diseases[0][0] }}</div>
         <ul class="remedy-list">
-          {% for r in remedies %}
-            <li>{{ r }}</li>
-          {% endfor %}
+          {% for r in remedies %}<li>{{ r }}</li>{% endfor %}
         </ul>
+      </div>
+      {% endif %}
+
+      <!-- Doctor Recommendations -->
+      {% if recommended_doctors %}
+      <div class="doctor-section">
+        <div class="doctor-section-header">
+          <h3>Recommended Doctors</h3>
+          <span class="specialty-badge">{{ recommended_specialty }}</span>
+        </div>
+        <p class="doctor-section-sub">Based on your diagnosis, we recommend consulting a <strong>{{ recommended_specialty }}</strong></p>
+
+        <div class="doctor-cards">
+          {% for doctor in recommended_doctors %}
+          <div class="doctor-card">
+            <div class="doctor-avatar">
+              {{ doctor.name.split()[1][0] }}{{ doctor.name.split()[2][0] if doctor.name.split()|length > 2 else '' }}
+            </div>
+            <div class="doctor-info">
+              <div class="doctor-name">{{ doctor.name }}</div>
+              <div class="doctor-specialty">{{ doctor.specialty }}</div>
+              <div class="doctor-hospital">🏥 {{ doctor.hospital }}</div>
+              <div class="doctor-status available">● Available</div>
+            </div>
+            <div class="doctor-action">
+              <form method="POST" action="{{ url_for('book_appointment', doctor_id=doctor.id) }}" class="booking-form">
+                <input type="hidden" name="disease" value="{{ confidence_scores[0][0] if confidence_scores else '' }}">
+                <div class="booking-fields">
+                  <div class="booking-field">
+                    <label>Date</label>
+                    <input type="date" name="appt_date" class="booking-input"
+                      min="{{ now.strftime('%Y-%m-%d') if now else '' }}" required>
+                  </div>
+                  <div class="booking-field">
+                    <label>Time</label>
+                    <select name="appt_time" class="booking-input" required>
+                      <option value="" disabled selected>Select</option>
+                      {% for t in ['09:00 AM','09:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM',
+                                   '12:00 PM','01:00 PM','01:30 PM','02:00 PM','02:30 PM','03:00 PM',
+                                   '03:30 PM','04:00 PM','04:30 PM','05:00 PM'] %}
+                        <option value="{{ t }}">{{ t }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-teal">Book Appointment</button>
+              </form>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
       </div>
       {% endif %}
 
@@ -124,7 +155,7 @@
     {% elif search_symptoms %}
     <div class="no-match">
       <h3>No matches found</h3>
-      <p>No conditions matched "<strong>{{ search_symptoms }}</strong>". Try different phrasing or check spelling.</p>
+      <p>No conditions matched "<strong>{{ search_symptoms }}</strong>". Try different phrasing.</p>
     </div>
     {% endif %}
 
@@ -140,6 +171,9 @@
       document.getElementById('submitBtn').disabled = true;
       document.getElementById('submitBtn').textContent = 'Analyzing…';
     });
+    // Set min date for all date inputs to today
+    const today = new Date().toISOString().split('T')[0];
+    document.querySelectorAll('input[type="date"]').forEach(d => d.min = today);
   </script>
 
 </body>

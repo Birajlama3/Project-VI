@@ -783,3 +783,273 @@ tr:hover td { background: var(--warm-gray); transition: background 0.15s; }
   .navbar { padding: 0 24px; }
   .cta-band { flex-direction: column; text-align: center; }
 }
+/* ── Doctor Recommendations ───────────────────────────── */
+.doctor-section {
+  background: white;
+  border: 1.5px solid #e5e5e5;
+  border-radius: 14px;
+  padding: 28px;
+  margin-top: 20px;
+}
+
+.doctor-section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+
+.doctor-section-header h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0d1b2a;
+  margin: 0;
+}
+
+.specialty-badge {
+  background: #0d9488;
+  color: white;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+
+.doctor-section-sub {
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+}
+
+.doctor-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.doctor-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 18px 20px;
+  transition: box-shadow 0.2s;
+}
+
+.doctor-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+
+.doctor-avatar {
+  width: 52px;
+  height: 52px;
+  background: #0d1b2a;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.doctor-avatar.small {
+  width: 44px;
+  height: 44px;
+  font-size: 0.85rem;
+}
+
+.doctor-info {
+  flex: 1;
+}
+
+.doctor-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0d1b2a;
+  margin-bottom: 2px;
+}
+
+.doctor-specialty {
+  font-size: 0.85rem;
+  color: #0d9488;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.doctor-hospital {
+  font-size: 0.83rem;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+
+.doctor-status.available {
+  font-size: 0.8rem;
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.doctor-action {
+  flex-shrink: 0;
+}
+
+.btn-teal {
+  background: #0d9488;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.btn-teal:hover {
+  background: #0f766e;
+}
+
+/* ── Appointments page ────────────────────────────────── */
+.appt-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.appt-card {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: white;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px 24px;
+}
+
+.appt-card.appt-cancelled {
+  opacity: 0.55;
+  border-color: #e5e7eb;
+}
+
+.appt-info {
+  flex: 1;
+}
+
+.appt-doctor-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #0d1b2a;
+  margin-bottom: 2px;
+}
+
+.appt-specialty {
+  font-size: 0.85rem;
+  color: #0d9488;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.appt-hospital {
+  font-size: 0.83rem;
+  color: #6b7280;
+  margin-bottom: 3px;
+}
+
+.appt-disease {
+  font-size: 0.83rem;
+  color: #374151;
+  margin-bottom: 3px;
+}
+
+.appt-date {
+  font-size: 0.8rem;
+  color: #9ca3af;
+}
+
+.appt-status-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+
+.appt-badge {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 5px 14px;
+  border-radius: 20px;
+}
+
+.appt-badge.confirmed {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.appt-badge.cancelled {
+  background: #f1f5f9;
+  color: #94a3b8;
+}
+
+.btn-danger-sm {
+  background: transparent;
+  color: #dc2626;
+  border: 1.5px solid #dc2626;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-danger-sm:hover {
+  background: #dc2626;
+  color: white;
+}
+/* ── Doctor Recommendations ─────────────────────────────── */
+.doctor-section { background:white; border:1.5px solid #e5e5e5; border-radius:14px; padding:28px; margin-top:20px; }
+.doctor-section-header { display:flex; align-items:center; gap:12px; margin-bottom:6px; }
+.doctor-section-header h3 { font-size:1.1rem; font-weight:700; color:#0d1b2a; margin:0; }
+.specialty-badge { background:#0d9488; color:white; font-size:0.75rem; font-weight:600; padding:4px 12px; border-radius:20px; }
+.doctor-section-sub { color:#6b7280; font-size:0.9rem; margin-bottom:20px; }
+.doctor-cards { display:flex; flex-direction:column; gap:16px; }
+.doctor-card { display:flex; align-items:flex-start; gap:18px; background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:12px; padding:18px 20px; transition:box-shadow 0.2s; }
+.doctor-card:hover { box-shadow:0 4px 16px rgba(0,0,0,0.08); }
+.doctor-avatar { width:52px; height:52px; background:#0d1b2a; color:white; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1rem; font-weight:700; flex-shrink:0; }
+.doctor-avatar.small { width:44px; height:44px; font-size:0.85rem; }
+.doctor-info { flex:1; }
+.doctor-name { font-size:1rem; font-weight:700; color:#0d1b2a; margin-bottom:2px; }
+.doctor-specialty { font-size:0.85rem; color:#0d9488; font-weight:600; margin-bottom:4px; }
+.doctor-hospital { font-size:0.83rem; color:#6b7280; margin-bottom:4px; }
+.doctor-status.available { font-size:0.8rem; color:#16a34a; font-weight:600; }
+
+/* ── Booking form ────────────────────────────────────────── */
+.doctor-action { flex-shrink:0; min-width:220px; }
+.booking-form { display:flex; flex-direction:column; gap:10px; }
+.booking-fields { display:flex; gap:10px; }
+.booking-field { display:flex; flex-direction:column; gap:4px; flex:1; }
+.booking-field label { font-size:0.78rem; font-weight:600; color:#374151; }
+.booking-input { padding:8px 10px; border:1.5px solid #d1d5db; border-radius:8px; font-size:0.85rem; color:#0d1b2a; background:white; width:100%; box-sizing:border-box; }
+.booking-input:focus { outline:none; border-color:#0d9488; }
+.btn-teal { background:#0d9488; color:white; border:none; padding:10px 18px; border-radius:8px; font-size:0.9rem; font-weight:600; cursor:pointer; width:100%; transition:background 0.2s; }
+.btn-teal:hover { background:#0f766e; }
+
+/* ── Appointments page ───────────────────────────────────── */
+.appt-list { display:flex; flex-direction:column; gap:14px; }
+.appt-card { display:flex; align-items:center; gap:18px; background:white; border:1.5px solid #e2e8f0; border-radius:12px; padding:20px 24px; }
+.appt-info { flex:1; }
+.appt-doctor-name { font-size:1rem; font-weight:700; color:#0d1b2a; margin-bottom:2px; }
+.appt-specialty { font-size:0.85rem; color:#0d9488; font-weight:600; margin-bottom:4px; }
+.appt-hospital { font-size:0.83rem; color:#6b7280; margin-bottom:3px; }
+.appt-disease { font-size:0.83rem; color:#374151; margin-bottom:4px; }
+.appt-date { font-size:0.88rem; color:#0d1b2a; font-weight:600; margin-bottom:2px; }
+.appt-booked { font-size:0.78rem; color:#9ca3af; }
+.appt-status-col { display:flex; flex-direction:column; align-items:flex-end; flex-shrink:0; }
+.appt-badge { font-size:0.8rem; font-weight:600; padding:5px 14px; border-radius:20px; }
+.appt-badge.confirmed { background:#dcfce7; color:#16a34a; }
+.btn-danger-sm { background:transparent; color:#dc2626; border:1.5px solid #dc2626; padding:6px 14px; border-radius:6px; font-size:0.8rem; font-weight:600; cursor:pointer; transition:all 0.2s; }
+.btn-danger-sm:hover { background:#dc2626; color:white; }

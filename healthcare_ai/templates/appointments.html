@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Appointments — SymptoCare</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <nav class="navbar">
+    <a href="{{ url_for('home') }}" class="navbar-brand" style="text-decoration:none;">
+      <span class="dot"></span> SymptoCare
+    </a>
+    <div class="navbar-links">
+      <a href="{{ url_for('appointments') }}" style="font-weight:600;">My Appointments</a>
+      <a href="{{ url_for('history') }}">History</a>
+      <div class="navbar-user">
+        <div class="avatar">{{ session.username[0].upper() }}</div>
+        {{ session.username }}
+      </div>
+      <a href="{{ url_for('logout') }}" class="btn-logout">Log out</a>
+    </div>
+  </nav>
+
+  <div class="predict-layout">
+
+    <div class="page-header">
+      <h1>My Appointments</h1>
+      <p>Your upcoming doctor appointments</p>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}{% for cat, msg in messages %}
+        <div class="flash-item flash-{{ cat }}" style="margin-bottom:16px;">{{ msg }}</div>
+      {% endfor %}{% endif %}
+    {% endwith %}
+
+    {% if appointments %}
+    <div class="appt-list">
+      {% for appt in appointments %}
+      <div class="appt-card">
+        <div class="doctor-avatar small">
+          {{ appt.doctor.name.split()[1][0] }}{{ appt.doctor.name.split()[2][0] if appt.doctor.name.split()|length > 2 else '' }}
+        </div>
+        <div class="appt-info">
+          <div class="appt-doctor-name">{{ appt.doctor.name }}</div>
+          <div class="appt-specialty">{{ appt.doctor.specialty }}</div>
+          <div class="appt-hospital">🏥 {{ appt.doctor.hospital }}</div>
+          {% if appt.disease %}
+          <div class="appt-disease">Diagnosis: <strong>{{ appt.disease }}</strong></div>
+          {% endif %}
+          <div class="appt-date">
+            📅 {{ appt.appt_date }} &nbsp;·&nbsp; 🕐 {{ appt.appt_time }}
+          </div>
+          <div class="appt-booked">Booked on {{ appt.booked_at.strftime('%b %d, %Y') }}</div>
+        </div>
+        <div class="appt-status-col">
+          <span class="appt-badge confirmed">✓ Confirmed</span>
+          <form method="POST" action="{{ url_for('cancel_appointment', appt_id=appt.id) }}" style="margin-top:10px;">
+            <button type="submit" class="btn-danger-sm"
+              onclick="return confirm('Cancel and remove this appointment?')">Cancel</button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="no-match">
+      <h3>No appointments yet</h3>
+      <p>Run a symptom check and book a doctor from the results page.</p>
+      <a href="{{ url_for('predict') }}" class="btn btn-primary" style="margin-top:16px; display:inline-block;">Check Symptoms →</a>
+    </div>
+    {% endif %}
+
+    <div style="margin-top:32px;">
+      <a href="{{ url_for('predict') }}" class="btn btn-outline">← Back to symptom check</a>
+    </div>
+
+  </div>
+
+</body>
+</html>
