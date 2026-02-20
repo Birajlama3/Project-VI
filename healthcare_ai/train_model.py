@@ -9,18 +9,18 @@ import psutil  # For RAM monitoring
 TARGET = "prognosis"  # Based on your code; confirm with df.columns
 
 # Test mode: Use a small subset to avoid RAM crashes
-TEST_MODE = True  # Set to False for full dataset (risky on low-RAM Macs)
-SUBSET_SIZE = 2000  # Number of rows for testing; increase if your Mac can handle
+TEST_MODE = True  
+SUBSET_SIZE = 2000  
 
 print("Loading dataset...")
 data = None
 try:
     # Load normally first to check dtypes
-    data = pd.read_csv("data.csv")
+    data = pd.read_csv("sample_dataset.csv")
     print(f"Full dataset shape: {data.shape}")
     print(f"Columns: {list(data.columns)}")
     print(f"Target column '{TARGET}' exists: {TARGET in data.columns}")
-    print(f"Sample dtypes:\n{data.dtypes.head(10)}")  # Check if target is string
+    print(f"Sample dtypes:\n{data.dtypes.head(10)}") 
     
     # Optimize dtypes for memory: Convert binary/numeric columns to int8, leave strings as is
     dtype_dict = {}
