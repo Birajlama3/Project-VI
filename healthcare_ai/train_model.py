@@ -6,8 +6,7 @@ import joblib
 import psutil  # For RAM monitoring
 
 # Target column (adjust if wrong)
-TARGET = "prognosis"  # Based on your code; confirm with df.columns
-
+TARGET = "prognosis" 
 # Test mode: Use a small subset to avoid RAM crashes
 TEST_MODE = True  
 SUBSET_SIZE = 2000  
